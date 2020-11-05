@@ -1,0 +1,40 @@
+{
+  "name": "grpc2http",
+  "version": "0.0.2",
+  "description": "A grpc api to http api tool",
+  "private": false,
+  "scripts": {
+    "start": "export DEBUG=tds.* && node ./bin/www"
+  },
+  "bin": {
+    "grpc2http": "bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/leyap/grpc2http"
+  },
+  "keywords": [
+    "npm",
+    "cli",
+    "http",
+    "grpc",
+    "protobuf"
+  ],
+  "author": "lisper@xd.com",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/proto-loader": "^0.1.0",
+    "async": "^1.5.2",
+    "commander": "^6.2.0",
+    "compression": "^1.7.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "google-protobuf": "^3.0.0",
+    "grpc": "^1.11.0",
+    "http-errors": "~1.6.3",
+    "lodash": "^4.6.1",
+    "minimist": "^1.2.0",
+    "morgan": "~1.9.1",
+    "protobufjs": "^6.10.1"
+  }
+}

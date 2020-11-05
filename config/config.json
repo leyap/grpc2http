@@ -1,0 +1,5 @@
+{
+    "grpcHost": "127.0.0.1:9503",
+    "httpPort": "3503",
+    "protoPath": "grpc/protos"
+}

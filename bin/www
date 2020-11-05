@@ -1,0 +1,142 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var debug = require('debug')('tds:subgateway');
+var fs = require('fs');
+var http = require('http');
+var path = require('path');
+var config = require('../config')
+const program = require('commander');
+
+const cwd = process.cwd();
+const package = require('../package.json')
+
+program.version(package.version, '-v, --version', 'output the current version')
+    .description('http client => [ http server -> grpc client ] => grpc Server')
+    .option('-i, --input [input]', 'protos directory')
+    .option('-g, --grpchost [grpchost]', 'grpc server host')
+    .option('-p, --httpport [httpport]', 'local http listen port')
+    .option('-c, --config [config]', 'config file')
+    .parse(process.argv)
+
+const configFile = program.config || 'grpc2http.config.json'
+
+let inputDir;
+let grpcHost;
+let httpPort;
+
+if (fs.existsSync(configFile)) {
+  let config = {}
+  try {
+    config = JSON.parse(fs.readFileSync(configFile))
+    inputDir = config.protoPath;
+    grpcHost = config.grpcHost;
+    httpPort = config.httpPort;
+  } catch (e) {
+  }
+}
+
+inputDir = (program.input ? path.resolve(cwd, program.input) : inputDir) || path.resolve(cwd, 'protos')
+grpcHost = program.grpcpost || grpcHost || '127.0.0.1:9503'
+httpPort = program.httpport || httpPort || '3503'
+
+console.log('proto direction: ',inputDir)
+console.log('grpc server host: ', grpcHost)
+console.log('http listen port: ', httpPort)
+
+if (!fs.existsSync(inputDir)) {
+  console.error("Error! No such file or directory: ", inputDir)
+  process.exit(1)
+}
+
+config.protoFilePath = inputDir
+config.grpcServerHost = grpcHost
+config.httpServerPort = httpPort
+
+var app = require('../app');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || config.httpServerPort || '3203');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort (val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError (error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+      ? 'Pipe ' + port
+      : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening () {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+      ? 'pipe ' + addr
+      : 'port ' + addr.port;
+  // debug('Listening http server on ' + bind);
+  console.log('--------------------------------------------------')
+  console.log('http call like: 127.0.0.1:'+addr.port+'/mycom.sample.User/getInfo')
+}
