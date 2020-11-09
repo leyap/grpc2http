@@ -25,9 +25,9 @@ http client => [ http server -> grpc client ] => grpc Server
 Options:
   -v, --version              output the version number
   -i, --input [input]        protos directory
-  -g, --grpchost [grpchost]  grpc server host
+  -g, --grpchost [grpchost]  grpc server host (ip:port)
   -p, --httpport [httpport]  local http listen port
-  -c, --config [config]      config file
+  -c, --config [config]      config file (default name is grpc2http.config.json)
   -h, --help                 display help for command
 ````
 
