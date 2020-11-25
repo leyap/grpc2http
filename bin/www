@@ -140,4 +140,6 @@ function onListening () {
   // debug('Listening http server on ' + bind);
   console.log('--------------------------------------------------')
   console.log('http call like: 127.0.0.1:'+addr.port+'/mycom.sample.User/getInfo')
+  console.log('--------------------------------------------------')
+  console.log('open http://localhost:' + addr.port+' view web debugger');
 }

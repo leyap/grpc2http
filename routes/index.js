@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const { clientWS } = require('../service/mws');
 
 var jsonToGrpc = require('../grpc/jsonToGrpc');
 
@@ -20,20 +21,23 @@ router.all('/*', function(req, res, next) {
   if (methodName[methodName.length-1] === '/') {
     methodName = methodName.substring(0, methodName.length-1)
   }
-  console.log('Request from http client:');
-  console.log('client ip: ', clientIp);
-  console.log('package: ', packageName);
-  console.log('service: ', serviceName);
-  console.log('method: ', methodName);
 
   const body = {...req.query, ...req.body}
 
-  console.log('headers:');
-  console.log(JSON.stringify(headers, null, '\t'));
-  console.log('body:');
-  console.log(JSON.stringify(body, null, '\t'));
+  if (clientWS.clients.length === 0) {
+    console.log('Request from http client:');
+    console.log('client ip: ', clientIp);
+    console.log('package: ', packageName);
+    console.log('service: ', serviceName);
+    console.log('method: ', methodName);
 
-  jsonToGrpc(packageName, serviceName, methodName, {body, headers}, (grpcRes, err) => {
+    console.log('headers:');
+    console.log(JSON.stringify(headers, null, '\t'));
+    console.log('body:');
+    console.log(JSON.stringify(body, null, '\t'));
+  }
+
+  jsonToGrpc(packageName, serviceName, methodName, {body, headers, clientIp}, (grpcRes, err) => {
     if (err) {
       return res.json({
         code: err.errCode, msg: err.msg
