@@ -39,7 +39,8 @@ if (fs.existsSync(configFile)) {
   }
 }
 
-inputDir = (program.input ? path.resolve(cwd, program.input) : inputDir) || path.resolve(cwd, 'protos')
+// inputDir = (program.input ? path.resolve(cwd, program.input) : inputDir) || path.resolve(cwd, 'protos')
+inputDir = program.input || 'protos'
 grpcHost = program.grpchost || grpcHost || '127.0.0.1:9503'
 httpPort = program.httpport || httpPort || '3503'
 

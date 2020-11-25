@@ -10,6 +10,19 @@ var config = require('../config')
 let exportObj = {}
 let serviceObj = {}
 let grpcMethodsList = []
+let pathList = [config.protoFilePath]
+
+function getPathList (mypath) {
+    var files = fs.readdirSync(mypath)
+    files.forEach(function (filename, index) {
+        var fullname = path.join(mypath, filename)
+        var stat = fs.statSync(fullname)
+        if (stat.isDirectory()) {
+            pathList.push(fullname)
+            getPathList(fullname)
+        }
+    })
+}
 
 function build (mypath) {
     var files = fs.readdirSync(mypath)
@@ -20,7 +33,8 @@ function build (mypath) {
         if (stat.isDirectory()) {
             build(fullname)
         } else if (stat.isFile() && extname === '.proto') {
-            parseProtoFile(fullname);
+            // parseProtoFile(fullname);
+            parseProtoFile(filename);
             (function (fullname) {
                 fs.watchFile(fullname, (curr, prev) => {
 	            console.log(fullname + ' changed!');
@@ -31,6 +45,9 @@ function build (mypath) {
     })
 }
 
+getPathList(config.protoFilePath)
+console.log('proto include path:')
+console.log(pathList)
 build(config.protoFilePath)
 
 // console.log('grpc server host: ', config.grpcServerHost);
@@ -83,7 +100,8 @@ function parseProtoFile (filePath, rewrite) {
             longs: Number,
             enums: String,
             defaults: true,
-            oneofs: true
+            oneofs: true,
+            includeDirs: pathList
         });
     var grpcObj= grpc.loadPackageDefinition(packageDefinition);
     buildServices(grpcObj, '', rewrite)

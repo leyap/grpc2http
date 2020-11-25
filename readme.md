@@ -8,6 +8,7 @@ http client => [ http server -> grpc client ] => grpc Server
 1. 支持热重载proto文件
 2. 支持url query参数和post json参数合并,并映射到grpc参数
 3. 支持http header映射到grpc medadata
+4. 支持import(0.0.4版新增加)
 
 ### Install
 ````
