@@ -28,6 +28,8 @@ function jsonToGrpc (pkg, service, method, req, cb) {
     const startTime = new Date()
 
     grpcClient[pkg][service][method](body, meta, function(err, response) {
+      console.log(response.data)
+      console.log(response.data[0], response.data[1])
       if (err) {
         console.log('Error from grpc service:')
         console.log(err.toString());

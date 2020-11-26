@@ -81,7 +81,13 @@ function buildServices (grpcObj, pkgName, rewrite) {
                         return console.log("error: multi pgk.service: ", pkg+'.'+service)
                     }
                 }
-                exportObj[keyName][service] = new grpcObj[pkg][service](config.grpcServerHost, grpc.credentials.createInsecure(), {'grpc.max_send_message_length': 1024*1024*1024})
+                exportObj[keyName][service] = new grpcObj[pkg][service](config.grpcServerHost,
+                    grpc.credentials.createInsecure(),
+                    {
+                        'grpc.max_send_message_length': 128*1024*1024,
+                        'grpc.max_receive_message_length': 128*1024*1024,
+                    }
+                    )
                 serviceObj[keyName][service] = []
                 for(m in grpcObj[pkg][service].service) {
                     serviceObj[keyName][service].push(m);
