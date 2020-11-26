@@ -38,7 +38,11 @@ function build (mypath) {
             (function (fullname) {
                 fs.watchFile(fullname, (curr, prev) => {
 	            console.log(fullname + ' changed!');
+	            try {
                     parseProtoFile(fullname, true);
+                } catch (e) {
+	                console.log(e.toString())
+                }
                 })
             })(fullname)
         }
